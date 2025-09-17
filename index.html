@@ -3,35 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片显示示例</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            background-color: rgb(26,26,26);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            padding: 10px;
+            min-height: 100vh;
+        }
+        
+        .main-container {
+            width: 100%;
+            max-width: 800px; /* 限制最大宽度 */
+            margin: 0 auto;
             padding: 20px;
+            position: relative;
         }
-        .image-container {
-            margin: 20px 0;
+        
+        /* 标题容器样式（保持原有样式，新增flex布局） */
+        .page-title {
             text-align: center;
-        }
-        img {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: rgb(255,102,0);
+            font-weight: bold;
             max-width: 100%;
-            height: auto;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;          /* 启用flex布局 */
+            align-items: center;    /* 垂直居中对齐 */
+            justify-content: center; /* 水平居中对齐 */
+        }
+
+        /* 标题图标样式 */
+        .title-icon {
+            width: 30px;            /* 控制图标宽度（根据需求调整） */
+            height: 30px;           /* 控制图标高度（保持与宽度比例一致） */
+            margin-right: 10px;     /* 图标与标题文本的间距 */
+            object-fit: contain;    /* 确保图标完整显示（不拉伸） */
+        }
+        
+        /* 响应式设计：小屏幕下调整图标大小 */
+        @media (max-width: 768px) {
+            .title-icon {
+                width: 25px;
+                height: 25px;
+                margin-right: 8px;
+            }
+            .page-title {
+                font-size: 20px;    /* 缩小标题字体大小 */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .title-icon {
+                width: 20px;
+                height: 20px;
+                margin-right: 5px;
+            }
+            .page-title {
+                font-size: 18px;    /* 进一步缩小标题字体大小 */
+            }
+        }
+        
+
+        
+        /* 强制四列布局 */
+        .turret-container {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr)); /* 四列等宽 */
+            gap: 8px; /* 减小间距 */
+            width: 100%;
+        }
+        
+        .turret-card {
+            background-color: rgb(51,51,51);
+            border: 2px solid rgb(68,68,68);
+            border-radius: 10px;
+            padding: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            min-width: 0;
+        }
+
+        .turret-card .turret-icon {
+            width: 36px;
+            height: 36px;
+            margin-bottom: 4px;
+            object-fit: contain;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+        }
+
+        .turret-card div {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            font-size: 14px;
+        }
+
+        
+        .attr-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: transform 0.5s, opacity 0.5s;
+            background-color: rgb(40,40,40);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            display: none;
+        }
+        
+        .attr-container.active {
+            transform: translateX(0);
+            opacity: 1;
+            display: block;
+        }
+        
+        .attr-item {
+            background-color: rgb(68,68,68);
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .attr-item:hover {
+            background-color: rgb(85,85,85);
+        }
+        
+        .back-btn {
+            background-color: rgb(255,102,0);
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1>图片显示示例</h1>
-    
-    <!-- 方式1：直接使用img标签 -->
-    <div class="image-container">
-        <h2>直接显示图片</h2>
-        <img src="totem.png" alt="示例图片1">
-        <p>这是一张400x300的占位图片</p>
-    </div>
-    
+    <div class="main-container">
+        <div class="page-title">⚔炮塔列表🧾</div>
+        
+        <div id="turretSelection" class="turret-container">
+            <div class="turret-card" onclick="selectTurret('bottle')">
+                <img src="http://127.0.0.1:8080/files/Bottle.png" class="turret-icon">
+                <div>瓶子炮</div>
+            </div>
+            <div class="turret-card" onclick="selectTurret('shit')">
+                <img src="http://127.0.0.1:8080/files/Shit.png" class="turret-icon">
+                <div>便便</div>
+            </div>
+            <div class="turret-card" onclick="selectTurret('star')">
+                <img src="http://127.0.0.1:8080/files/Star.png" class="turret-icon">
+                <div>炸弹星</div>
+            </div>
+            <div class="turret-card" onclick="selectTurret('sun')">
+                <img src="http://127.0.0.1:8080/files/Sun.png" class="turret-icon">
+                <div>太阳花</div>
+            </div>
+            <div class="turret-card" onclick="selectTurret('ball')">
+                <img src="http://127.0.0.1:8080/files/Ball.png" class="turret-icon">
+                <div>魔法球</div>
+            </div>
+            <div class="turret-card" onclick="selectTurret('icefan')">
+                <img src="http://127.0.0.1:8080/files/IceFan.png" class="turret-icon">
+                <div>减速风扇</div>
+            </div>
+            <div class="turret-card" onclick="selectTurret('moon')">
+                <img src="http://127.0.0.1:8080/files/Moon.png" class="turret-icon">
+                <div>月亮</div>
+            </div>
+            <div class="turret-card" onclick="selectTurret('rocket')">
+                <img src="http://127.0.0.1:8080/files/Rocket.png" class="turret-icon">
+                <div>火箭</div>
+            </div>
+            <div class="turret-card" onclick="selectTurret('arrow')">
+                <img src="http://127.0.0.1:8080/files/Arrow.png" class="turret-icon">
+                <div>多重箭</div>
+            </div>
+        </div>
 
+        <!-- 属性容器保持不变 -->
+        <div id="bottleAttributes" class="attr-container">
+            <div class="page-title">
+            <img src="http://127.0.0.1:8080/files/Bottle.png" alt="瓶子炮" class="title-icon">
+            瓶子炮属性
+            </div>
+
+            <div class="attr-item" onclick="modifyBottleAttack.onClick()">💥 单发伤害</div>
+            <div class="attr-item" onclick="modifyBottleAtkGap.onClick()">⏳ 攻击间隔</div>
+            <div class="attr-item" onclick="modifyBottleRange.onClick()">🎯 射程</div>
+            <div class="attr-item" onclick="modifyBottleCost.onClick()">💰 造价</div>
+            <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
+        </div>
+
+        <div id="shitAttributes" class="attr-container">
+            <div class="page-title">
+            <img src="http://127.0.0.1:8080/files/Shit.png" alt="便便" class="title-icon">
+            便便属性
+            </div>
+            <div class="attr-item" onclick="modifyShitAttack.onClick()">💥 单发伤害</div>
+            <div class="attr-item" onclick="modifyShitAtkGap.onClick()">⏳ 攻击间隔</div>
+            <div class="attr-item" onclick="modifyShitRange.onClick()">🎯 射程</div>
+            <div class="attr-item" onclick="modifyShitCost.onClick()">💰 造价</div>
+            <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
+        </div>
+
+        <div id="starAttributes" class="attr-container">
+            <div class="page-title">
+            <img src="http://127.0.0.1:8080/files/Star.png" alt="炸弹星" class="title-icon">
+            炸弹星属性
+            </div>
+            <div class="attr-item" onclick="modifyStarAttack.onClick()">💥 单发伤害</div>
+            <div class="attr-item" onclick="modifyStarAtkGap.onClick()">⏳ 攻击间隔</div>
+            <div class="attr-item" onclick="modifyStarRange.onClick()">🎯 射程</div>
+            <div class="attr-item" onclick="modifyStarCost.onClick()">💰 造价</div>
+            <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
+        </div>
+
+        <div id="sunAttributes" class="attr-container">
+            <div class="page-title">
+            <img src="http://127.0.0.1:8080/files/Sun.png" alt="太阳花" class="title-icon">
+            太阳花属性
+            </div>
+            <div class="attr-item" onclick="modifySunAttack.onClick()">💥 单发伤害</div>
+            <div class="attr-item" onclick="modifySunAtkGap.onClick()">⏳ 攻击间隔</div>
+            <div class="attr-item" onclick="modifySunRange.onClick()">🎯 射程</div>
+            <div class="attr-item" onclick="modifySunCost.onClick()">💰 造价</div>
+            <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
+        </div>
+
+        <div id="ballAttributes" class="attr-container">
+            <div class="page-title">
+            <img src="http://127.0.0.1:8080/files/Ball.png" alt="魔法球" class="title-icon">
+            魔法球属性
+            </div>
+            <div class="attr-item" onclick="modifyBallAttack.onClick()">💥 单发伤害</div>
+            <div class="attr-item" onclick="modifyBallAtkGap.onClick()">⏳ 攻击间隔</div>
+            <div class="attr-item" onclick="modifyBallRange.onClick()">🎯 射程</div>
+            <div class="attr-item" onclick="modifyBallCost.onClick()">💰 造价</div>
+            <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
+        </div>
+        <div id="icefanAttributes" class="attr-container">
+            <div class="page-title">
+            <img src="http://127.0.0.1:8080/files/IceFan.png" alt="减速风扇" class="title-icon">
+            减速风扇属性
+            </div>
+            <div class="attr-item" onclick="modifyIceFanAttack.onClick()">💥 单发伤害</div>
+            <div class="attr-item" onclick="modifyIceFanAtkGap.onClick()">⏳ 攻击间隔</div>
+            <div class="attr-item" onclick="modifyIceFanRange.onClick()">🎯 射程</div>
+            <div class="attr-item" onclick="modifyIceFanCost.onClick()">💰 造价</div>
+            <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
+        </div>
+        <div id="moonAttributes" class="attr-container">
+            <div class="page-title">
+            <img src="http://127.0.0.1:8080/files/Moon.png" alt="月亮" class="title-icon">
+            月亮属性
+            </div>
+            <div class="attr-item" onclick="modifyMoonAttack.onClick()">💥 单发伤害</div>
+            <div class="attr-item" onclick="modifyMoonAtkGap.onClick()">⏳ 攻击间隔</div>
+            <div class="attr-item" onclick="modifyMoonRange.onClick()">🎯 射程</div>
+            <div class="attr-item" onclick="modifyMoonCost.onClick()">💰 造价</div>
+            <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
+        </div>
+        <div id="rocketAttributes" class="attr-container">
+            <div class="page-title">
+            <img src="http://127.0.0.1:8080/files/Rocket.png" alt="火箭" class="title-icon">
+            火箭属性
+            </div>
+            <div class="attr-item" onclick="modifyRocketAttack.onClick()">💥 单发伤害</div>
+            <div class="attr-item" onclick="modifyRocketAtkGap.onClick()">⏳ 攻击间隔</div>
+            <div class="attr-item" onclick="modifyRocketRange.onClick()">🎯 射程</div>
+            <div class="attr-item" onclick="modifyRocketCost.onClick()">💰 造价</div>
+            <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
+        </div>
+        <div id="arrowAttributes" class="attr-container">
+            <div class="page-title">
+            <img src="http://127.0.0.1:8080/files/Arrow.png" alt="多重箭" class="title-icon">
+            多重箭属性
+            </div>
+            <div class="attr-item" onclick="modifyArrowAttack.onClick()">💥 单发伤害</div>
+            <div class="attr-item" onclick="modifyArrowAtkGap.onClick()">⏳ 攻击间隔</div>
+            <div class="attr-item" onclick="modifyArrowRange.onClick()">🎯 射程</div>
+            <div class="attr-item" onclick="modifyArrowCost.onClick()">💰 造价</div>
+            <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 'turretSelection';
+        
+        function selectTurret(type) {
+            if (currentPage === 'turretSelection') {
+                document.getElementById('turretSelection').style.display = 'none';
+                const targetPage = type + 'Attributes';
+                document.getElementById(targetPage).style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById(targetPage).classList.add('active');
+                    currentPage = targetPage;
+                }, 10);
+            }
+        }
+        
+        function backToTurrets() {
+            if (currentPage !== 'turretSelection') {
+                document.getElementById(currentPage).classList.remove('active');
+                document.getElementById(currentPage).classList.add('exiting');
+                
+                setTimeout(() => {
+                    document.getElementById(currentPage).style.display = 'none';
+                    document.getElementById(currentPage).classList.remove('exiting');
+                    document.getElementById('turretSelection').style.display = 'grid';
+                    currentPage = 'turretSelection';
+                }, 500);
+            }
+        }
+    </script>
 </body>
 </html>
