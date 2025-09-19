@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
     <style>
         * {
             box-sizing: border-box;
@@ -18,17 +17,17 @@
             font-family: 'Arial', sans-serif;
             padding: 10px;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
         .main-container {
             width: 100%;
-            max-width: 800px; /* 限制最大宽度 */
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             position: relative;
         }
         
-        /* 标题容器样式（保持原有样式，新增flex布局） */
         .page-title {
             text-align: center;
             margin-bottom: 20px;
@@ -39,20 +38,18 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: flex;          /* 启用flex布局 */
-            align-items: center;    /* 垂直居中对齐 */
-            justify-content: center; /* 水平居中对齐 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* 标题图标样式 */
         .title-icon {
-            width: 30px;            /* 控制图标宽度（根据需求调整） */
-            height: 30px;           /* 控制图标高度（保持与宽度比例一致） */
-            margin-right: 10px;     /* 图标与标题文本的间距 */
-            object-fit: contain;    /* 确保图标完整显示（不拉伸） */
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            object-fit: contain;
         }
         
-        /* 响应式设计：小屏幕下调整图标大小 */
         @media (max-width: 768px) {
             .title-icon {
                 width: 25px;
@@ -60,7 +57,7 @@
                 margin-right: 8px;
             }
             .page-title {
-                font-size: 20px;    /* 缩小标题字体大小 */
+                font-size: 20px;
             }
         }
         
@@ -71,17 +68,14 @@
                 margin-right: 5px;
             }
             .page-title {
-                font-size: 18px;    /* 进一步缩小标题字体大小 */
+                font-size: 18px;
             }
         }
         
-
-        
-        /* 强制四列布局 */
         .turret-container {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr)); /* 四列等宽 */
-            gap: 8px; /* 减小间距 */
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
             width: 100%;
         }
         
@@ -119,12 +113,12 @@
             font-size: 14px;
         }
 
-        
         .attr-container {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
+            width: 100%;
+            height: 100%;
             transform: translateX(100%);
             opacity: 0;
             transition: transform 0.5s, opacity 0.5s;
@@ -133,15 +127,17 @@
             padding: 25px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
             display: none;
+            overflow-y: auto;
+            z-index: 1000;
         }
         
         .attr-container.active {
             transform: translateX(0);
             opacity: 1;
-            display: block;
         }
         
         .attr-item {
+            -webkit-tap-highlight-color: transparent;
             background-color: rgb(68,68,68);
             padding: 12px 15px;
             margin: 8px 0;
@@ -149,10 +145,85 @@
             cursor: pointer;
             transition: all 0.3s;
             font-size: 16px;
+            position: relative;
+            border-left: 4px solid rgb(255,102,0); /* 添加左侧标识线 */
         }
         
         .attr-item:hover {
             background-color: rgb(85,85,85);
+        }
+        
+        .sub-options {
+            display: none;
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgb(60,60,60) 0%, rgb(45,45,45) 100%);
+            border: 2px solid rgb(85,85,85);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .sub-option {
+            padding: 12px 15px;
+            margin: 6px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        /* 一键修改样式 */
+        .sub-option:nth-child(1) {
+            background-color: rgba(76, 175, 80, 0.15);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .sub-option:nth-child(1):hover {
+            background-color: rgba(76, 175, 80, 0.25);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+        
+        /* 恢复原值样式 */
+        .sub-option:nth-child(2) {
+            background-color: rgba(244, 67, 54, 0.15);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        
+        .sub-option:nth-child(2):hover {
+            background-color: rgba(244, 67, 54, 0.25);
+            border-color: rgba(244, 67, 54, 0.5);
+        }
+        
+        /* 添加图标增强视觉效果 */
+        .sub-option:nth-child(1)::before {
+            content: "⚡";
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        
+        .sub-option:nth-child(2)::before {
+            content: "↺";
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        
+        /* 添加展开动画 */
+        .sub-options {
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .back-btn {
@@ -209,109 +280,336 @@
             </div>
         </div>
 
-        <!-- 属性容器保持不变 -->
+        <!-- 瓶子炮属性容器 -->
         <div id="bottleAttributes" class="attr-container">
             <div class="page-title">
-            <img src="http://127.0.0.1:8080/files/Bottle.png" alt="瓶子炮" class="title-icon">
-            瓶子炮属性
+                <img src="http://127.0.0.1:8080/files/Bottle.png" alt="瓶子炮" class="title-icon">
+                瓶子炮属性
             </div>
-
-            <div class="attr-item" onclick="modifyBottleAttack.onClick()">💥 单发伤害</div>
-            <div class="attr-item" onclick="modifyBottleAtkGap.onClick()">⏳ 攻击间隔</div>
-            <div class="attr-item" onclick="modifyBottleRange.onClick()">🎯 射程</div>
-            <div class="attr-item" onclick="modifyBottleCost.onClick()">💰 造价</div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🗡️ 单次伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyBottleAttack.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyBottleAttack.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                ⏳ 攻击间隔
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyBottleAtkGap.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyBottleAtkGap.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🎯 射程
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyBottleRange.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyBottleRange.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💰 造价
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyBottleCost.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyBottleCost.onClick('default')">恢复原值</div>
+                </div>
+            </div>
             <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
         </div>
 
+        <!-- 便便属性容器 -->
         <div id="shitAttributes" class="attr-container">
             <div class="page-title">
-            <img src="http://127.0.0.1:8080/files/Shit.png" alt="便便" class="title-icon">
-            便便属性
+                <img src="http://127.0.0.1:8080/files/Shit.png" alt="便便" class="title-icon">
+                便便属性
             </div>
-            <div class="attr-item" onclick="modifyShitAttack.onClick()">💥 单发伤害</div>
-            <div class="attr-item" onclick="modifyShitAtkGap.onClick()">⏳ 攻击间隔</div>
-            <div class="attr-item" onclick="modifyShitRange.onClick()">🎯 射程</div>
-            <div class="attr-item" onclick="modifyShitCost.onClick()">💰 造价</div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🗡️ 单次伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyShitAttack.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyShitAttack.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                ⏳ 攻击间隔
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyShitAtkGap.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyShitAtkGap.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🎯 射程
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyShitRange.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyShitRange.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💰 造价
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyShitCost.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyShitCost.onClick('default')">恢复原值</div>
+                </div>
+            </div>
             <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
         </div>
 
+        <!-- 炸弹星属性容器 -->
         <div id="starAttributes" class="attr-container">
             <div class="page-title">
-            <img src="http://127.0.0.1:8080/files/Star.png" alt="炸弹星" class="title-icon">
-            炸弹星属性
+                <img src="http://127.0.0.1:8080/files/Star.png" alt="炸弹星" class="title-icon">
+                炸弹星属性
             </div>
-            <div class="attr-item" onclick="modifyStarAttack.onClick()">💥 单发伤害</div>
-            <div class="attr-item" onclick="modifyStarAtkGap.onClick()">⏳ 攻击间隔</div>
-            <div class="attr-item" onclick="modifyStarRange.onClick()">🎯 射程</div>
-            <div class="attr-item" onclick="modifyStarCost.onClick()">💰 造价</div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🗡️ 单次伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyStarAttack.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyStarAttack.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                ⏳ 攻击间隔
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyStarAtkGap.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyStarAtkGap.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💥 溅射伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyStarSplashDmg.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyStarSplashDmg.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💰 造价
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyStarCost.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyStarCost.onClick('default')">恢复原值</div>
+                </div>
+            </div>
             <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
         </div>
 
+        <!-- 太阳花属性容器 -->
         <div id="sunAttributes" class="attr-container">
             <div class="page-title">
-            <img src="http://127.0.0.1:8080/files/Sun.png" alt="太阳花" class="title-icon">
-            太阳花属性
+                <img src="http://127.0.0.1:8080/files/Sun.png" alt="太阳花" class="title-icon">
+                太阳花属性
             </div>
-            <div class="attr-item" onclick="modifySunAttack.onClick()">💥 单发伤害</div>
-            <div class="attr-item" onclick="modifySunAtkGap.onClick()">⏳ 攻击间隔</div>
-            <div class="attr-item" onclick="modifySunRange.onClick()">🎯 射程</div>
-            <div class="attr-item" onclick="modifySunCost.onClick()">💰 造价</div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🗡️ 单次伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifySunAttack.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifySunAttack.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                ⏳ 攻击间隔
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifySunAtkGap.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifySunAtkGap.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🎯 射程
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifySunRange.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifySunRange.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💰 造价
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifySunCost.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifySunCost.onClick('default')">恢复原值</div>
+                </div>
+            </div>
             <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
         </div>
 
+        <!-- 魔法球属性容器 -->
         <div id="ballAttributes" class="attr-container">
             <div class="page-title">
-            <img src="http://127.0.0.1:8080/files/Ball.png" alt="魔法球" class="title-icon">
-            魔法球属性
+                <img src="http://127.0.0.1:8080/files/Ball.png" alt="魔法球" class="title-icon">
+                魔法球属性
             </div>
-            <div class="attr-item" onclick="modifyBallAttack.onClick()">💥 单发伤害</div>
-            <div class="attr-item" onclick="modifyBallAtkGap.onClick()">⏳ 攻击间隔</div>
-            <div class="attr-item" onclick="modifyBallRange.onClick()">🎯 射程</div>
-            <div class="attr-item" onclick="modifyBallCost.onClick()">💰 造价</div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🗡️ 单次伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyBallAttack.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyBallAttack.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                ⏳ 攻击间隔
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyBallAtkGap.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyBallAtkGap.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🎯 射程
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyBallRange.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyBallRange.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💰 造价
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyBallCost.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyBallCost.onClick('default')">恢复原值</div>
+                </div>
+            </div>
             <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
         </div>
+
+        <!-- 减速风扇属性容器 -->
         <div id="icefanAttributes" class="attr-container">
             <div class="page-title">
-            <img src="http://127.0.0.1:8080/files/IceFan.png" alt="减速风扇" class="title-icon">
-            减速风扇属性
+                <img src="http://127.0.0.1:8080/files/IceFan.png" alt="减速风扇" class="title-icon">
+                减速风扇属性
             </div>
-            <div class="attr-item" onclick="modifyIceFanAttack.onClick()">💥 单发伤害</div>
-            <div class="attr-item" onclick="modifyIceFanAtkGap.onClick()">⏳ 攻击间隔</div>
-            <div class="attr-item" onclick="modifyIceFanRange.onClick()">🎯 射程</div>
-            <div class="attr-item" onclick="modifyIceFanCost.onClick()">💰 造价</div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🗡️ 单次伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyIceFanAttack.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyIceFanAttack.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                ⏳ 攻击间隔
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyIceFanAtkGap.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyIceFanAtkGap.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🎯 射程
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyIceFanRange.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyIceFanRange.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💰 造价
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyIceFanCost.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyIceFanCost.onClick('default')">恢复原值</div>
+                </div>
+            </div>
             <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
         </div>
+
+        <!-- 月亮属性容器 -->
         <div id="moonAttributes" class="attr-container">
             <div class="page-title">
-            <img src="http://127.0.0.1:8080/files/Moon.png" alt="月亮" class="title-icon">
-            月亮属性
+                <img src="http://127.0.0.1:8080/files/Moon.png" alt="月亮" class="title-icon">
+                月亮属性
             </div>
-            <div class="attr-item" onclick="modifyMoonAttack.onClick()">💥 单发伤害</div>
-            <div class="attr-item" onclick="modifyMoonAtkGap.onClick()">⏳ 攻击间隔</div>
-            <div class="attr-item" onclick="modifyMoonRange.onClick()">🎯 射程</div>
-            <div class="attr-item" onclick="modifyMoonCost.onClick()">💰 造价</div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🗡️ 单次伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyMoonAttack.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyMoonAttack.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                ⏳ 攻击间隔
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyMoonAtkGap.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyMoonAtkGap.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🎯 射程
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyMoonRange.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyMoonRange.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💰 造价
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyMoonCost.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyMoonCost.onClick('default')">恢复原值</div>
+                </div>
+            </div>
             <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
         </div>
+
+        <!-- 火箭属性容器 -->
         <div id="rocketAttributes" class="attr-container">
             <div class="page-title">
-            <img src="http://127.0.0.1:8080/files/Rocket.png" alt="火箭" class="title-icon">
-            火箭属性
+                <img src="http://127.0.0.1:8080/files/Rocket.png" alt="火箭" class="title-icon">
+                火箭属性
             </div>
-            <div class="attr-item" onclick="modifyRocketAttack.onClick()">💥 单发伤害</div>
-            <div class="attr-item" onclick="modifyRocketAtkGap.onClick()">⏳ 攻击间隔</div>
-            <div class="attr-item" onclick="modifyRocketRange.onClick()">🎯 射程</div>
-            <div class="attr-item" onclick="modifyRocketCost.onClick()">💰 造价</div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🗡️ 单次伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyRocketAttack.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyRocketAttack.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                ⏳ 攻击间隔
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyRocketAtkGap.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyRocketAtkGap.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🎯 射程
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyRocketRange.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyRocketRange.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💰 造价
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyRocketCost.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyRocketCost.onClick('default')">恢复原值</div>
+                </div>
+            </div>
             <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
         </div>
+
+        <!-- 多重箭属性容器 -->
         <div id="arrowAttributes" class="attr-container">
             <div class="page-title">
-            <img src="http://127.0.0.1:8080/files/Arrow.png" alt="多重箭" class="title-icon">
-            多重箭属性
+                <img src="http://127.0.0.1:8080/files/Arrow.png" alt="多重箭" class="title-icon">
+                多重箭属性
             </div>
-            <div class="attr-item" onclick="modifyArrowAttack.onClick()">💥 单发伤害</div>
-            <div class="attr-item" onclick="modifyArrowAtkGap.onClick()">⏳ 攻击间隔</div>
-            <div class="attr-item" onclick="modifyArrowRange.onClick()">🎯 射程</div>
-            <div class="attr-item" onclick="modifyArrowCost.onClick()">💰 造价</div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🗡️ 单次伤害
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyArrowAttack.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyArrowAttack.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                ⏳ 攻击间隔
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyArrowAtkGap.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyArrowAtkGap.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                🎯 射程
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyArrowRange.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyArrowRange.onClick('default')">恢复原值</div>
+                </div>
+            </div>
+            <div class="attr-item" onclick="toggleSubOptions(this)">
+                💰 造价
+                <div class="sub-options">
+                    <div class="sub-option" onclick="modifyArrowCost.onClick('max')">一键修改</div>
+                    <div class="sub-option" onclick="modifyArrowCost.onClick('default')">恢复原值</div>
+                </div>
+            </div>
             <div class="back-btn" onclick="backToTurrets()">⬆️ 返回</div>
         </div>
     </div>
@@ -334,16 +632,30 @@
         function backToTurrets() {
             if (currentPage !== 'turretSelection') {
                 document.getElementById(currentPage).classList.remove('active');
-                document.getElementById(currentPage).classList.add('exiting');
-                
                 setTimeout(() => {
                     document.getElementById(currentPage).style.display = 'none';
-                    document.getElementById(currentPage).classList.remove('exiting');
                     document.getElementById('turretSelection').style.display = 'grid';
                     currentPage = 'turretSelection';
                 }, 500);
             }
         }
+
+        function toggleSubOptions(element) {
+            const allSubOptions = document.querySelectorAll('.sub-options');
+            allSubOptions.forEach(sub => {
+                if (sub !== element.querySelector('.sub-options')) {
+                    sub.style.display = 'none';
+                }
+            });
+
+            const subOptions = element.querySelector('.sub-options');
+            if (subOptions.style.display === 'block') {
+                subOptions.style.display = 'none';
+            } else {
+                subOptions.style.display = 'block';
+            }
+        }
+
     </script>
 </body>
 </html>
