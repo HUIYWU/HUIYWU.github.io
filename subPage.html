@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保卫萝卜4 - 炮塔商店</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #4e9a5a 0%, #8cc78c 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        .shop-layout {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            align-items: stretch; /* 修改：使两侧高度相同 */
+        }
+        
+        header {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            border: 2px solid #5a9e6b;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+            margin-bottom: 6px;
+            color: #2c5c2c;
+        }
+        
+        .items-grid {
+            flex: 2;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #5a9e6b;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .item {
+            background: linear-gradient(145deg, #6baf7b, #4e9a5a);
+            border: 2px solid #5a9e6b;
+            border-radius: 6px;
+            padding: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .item:hover {
+            -webkit-tap-highlight-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0, 100, 0, 0.3);
+        }
+        
+        .item.selected {
+            border-color: #ff9900;
+            box-shadow: 0 0 8px #ff9900;
+        }
+        
+        .item.locked {
+            background: linear-gradient(145deg, #a0a0a0, #7a7a7a);
+            border-color: #888;
+            opacity: 0.7;
+        }
+        
+        .item-icon {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
+        }
+        
+        .detail-panel {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #5a9e6b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 250px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .detail-icon {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin: 12px 0;
+        }
+        
+        .detail-name {
+            font-size: 1.4rem;
+            color: #2c5c2c;
+            margin-bottom: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .detail-cost {
+            background: #6baf7b;
+            padding: 6px 12px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            color: white;
+        }
+        
+        .coin-icon {
+            color: gold;
+            margin-right: 6px;
+            font-size: 1rem;
+        }
+        
+        .detail-desc {
+            text-align: center;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 0.9rem;
+            padding: 0 8px;
+        }
+        
+        .unlock-btn {
+            background: linear-gradient(to bottom, #ffcc00, #ff9900);
+            color: #332200;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 8px;
+        }
+        
+        .unlock-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .unlock-btn:active {
+            transform: translateY(1px);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 12px;
+            margin-top: 15px;
+            color: #4e7854;
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 小屏幕适配 */
+        @media (max-width: 768px) {
+            .shop-layout {
+                flex-direction: column;
+            }
+            
+            .items-grid {
+                grid-template-columns: repeat(5, 1fr);
+                overflow-x: auto;
+                gap: 6px;
+                padding: 8px;
+            }
+            
+            .item {
+                min-width: 60px;
+                height: 65px;
+            }
+            
+            .item-icon {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .detail-panel {
+                min-width: auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .items-grid {
+                gap: 5px;
+            }
+            
+            .item {
+                min-width: 55px;
+                height: 60px;
+                padding: 3px;
+            }
+            
+            .item-icon {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>保卫萝卜4 - 炮塔商店</h1>
+            <p>选择并解锁各种强大的炮塔道具</p>
+        </header>
+        
+        <div class="shop-layout">
+            <div class="items-grid">
+                <!-- 第一行 -->
+                <div class="item selected" data-id="1">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Bottle.png" alt="瓶子炮">
+                </div>
+                <div class="item" data-id="2">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Shit.png" alt="便便">
+                </div>
+                <div class="item" data-id="3">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Star.png" alt="星星">
+                </div>
+                <div class="item" data-id="4">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Sun.png" alt="太阳花">
+                </div>
+                <div class="item" data-id="5">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Ball.png" alt="透明泡泡">
+                </div>
+                
+                <!-- 第二行 -->
+                <div class="item" data-id="6">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/IceFan.png" alt="风扇">
+                </div>
+                <div class="item" data-id="7">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Moon.png" alt="月亮">
+                </div>
+                <div class="item" data-id="8">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Rocket.png" alt="火箭">
+                </div>
+                <div class="item" data-id="9">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Arrow.png" alt="箭">
+                </div>
+                <div class="item locked" data-id="10">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="锁">
+                </div>
+                
+                <!-- 第三行 -->
+                <div class="item locked" data-id="11">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="12">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="13">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="14">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="15">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <!-- 第三行 -->
+                <div class="item locked" data-id="11">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="12">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="13">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="14">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="15">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <!-- 第三行 -->
+                <div class="item locked" data-id="11">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="12">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="13">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="14">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                <div class="item locked" data-id="15">
+                    <img class="item-icon" src="http://127.0.0.1:8080/files/Locked.png" alt="未知">
+                </div>
+                
+                
+            </div>
+            
+            <!-- 右侧详情面板 -->
+            <div class="detail-panel">
+                <img class="detail-icon" src="http://127.0.0.1:8080/files/Bottle.png" alt="瓶子炮">
+                <h2 class="detail-name">瓶子炮</h2>
+                <div class="detail-cost">
+                    <span class="coin-icon">🪙</span> 需要 100 金币解锁
+                </div>
+                <p class="detail-desc">基础炮塔，升到顶级后会有附加攻击效果。拥有稳定的攻击力和较快的攻击速度，是攻防兼备的基础装备。</p>
+                <button class="unlock-btn">解锁道具</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>保卫萝卜4 © 2023 | 所有炮塔需在游戏中解锁使用</p>
+        </footer>
+    </div>
+
+    <script>
+        // 道具选择功能
+        const items = document.querySelectorAll('.item');
+        const detailIcon = document.querySelector('.detail-icon');
+        const detailName = document.querySelector('.detail-name');
+        const detailDesc = document.querySelector('.detail-desc');
+        const unlockBtn = document.querySelector('.unlock-btn');
+        
+        // 道具数据
+        const itemData = {
+            1: {
+                icon: "http://127.0.0.1:8080/files/Bottle.png",
+                name: "瓶子炮",
+                cost: 100,
+                description: "基础炮塔，升到顶级后会有附加攻击效果。拥有稳定的攻击力和较快的攻击速度，是攻防兼备的基础装备。"
+            },
+            2: {
+                icon: "http://127.0.0.1:8080/files/Shit.png",
+                name: "便便",
+                cost: 80,
+                description: "投掷便便攻击敌人，有一定几率使敌人减速并造成持续伤害。"
+            },
+            3: {
+                icon: "http://127.0.0.1:8080/files/Star.png",
+                name: "星星",
+                cost: 150,
+                description: "发射星星进行弹射攻击，可以在多个敌人之间弹跳，造成连锁伤害。"
+            },
+            4: {
+                icon: "http://127.0.0.1:8080/files/Sun.png",
+                name: "太阳花",
+                cost: 200,
+                description: "产生阳光资源，每秒为你提供额外金币，辅助型道具。"
+            },
+            5: {
+                icon: "http://127.0.0.1:8080/files/Ball.png",
+                name: "透明泡泡",
+                cost: 120,
+                description: "生成保护泡泡包围敌人，使其暂时无法行动，控制型道具。"
+            },
+            6: {
+                icon: "http://127.0.0.1:8080/files/IceFan.png",
+                name: "风扇",
+                cost: 130,
+                description: "产生强风将敌人吹退，有效控制敌人前进速度。"
+            },
+            7: {
+                icon: "http://127.0.0.1:8080/files/Moon.png",
+                name: "月亮",
+                cost: 160,
+                description: "发射月光束攻击敌人，对范围内的多个敌人造成伤害。"
+            },
+            8: {
+                icon: "http://127.0.0.1:8080/files/Rocket.png",
+                name: "火箭",
+                cost: 180,
+                description: "发射火箭进行远程攻击，对单个敌人造成巨大伤害。"
+            },
+            9: {
+                icon: "http://127.0.0.1:8080/files/Arrow.png",
+                name: "箭",
+                cost: 110,
+                description: "快速发射箭矢攻击敌人，攻击速度较快但伤害较低。"
+            }
+        };
+        
+        // 添加点击事件
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                // 移除之前的选择
+                items.forEach(i => i.classList.remove('selected'));
+                
+                // 添加新选择
+                item.classList.add('selected');
+                
+                // 更新详情面板
+                const itemId = item.getAttribute('data-id');
+                if (itemData[itemId]) {
+                    const data = itemData[itemId];
+                    detailIcon.src = data.icon;
+                    detailName.textContent = data.name;
+                    detailDesc.textContent = data.description;
+                    document.querySelector('.detail-cost').innerHTML = `<span class="coin-icon">🪙</span> 需要 ${data.cost} 金币解锁`;
+                }
+            });
+        });
+        
+        // 解锁按钮功能
+        unlockBtn.addEventListener('click', () => {
+            alert('功能提示：解锁道具需要游戏内金币！');
+        });
+    </script>
+</body>
+</html>
